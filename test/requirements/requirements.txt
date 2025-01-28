@@ -1,0 +1,8 @@
+behave-html-pretty-formatter
+setuptools
+requests
+fastapi
+behave
+pylint
+Faker
+jsf
