@@ -1,147 +1,67 @@
-# Postman Collection Test Generator
+# Geração de Testes Automáticos a partir de Coleções Postman
 
-Este projeto é um gerador automatizado de estrutura de testes que converte uma coleção do Postman em um framework de testes estruturado usando BDD (Behavior Driven Development).
+Este script em Python automatiza a geração de testes a partir de coleções Postman. O objetivo é criar arquivos de teste estruturados em formato Gherkin `.feature`, arquivos de steps `_steps.py` e classes de serviço `_service.py`. Ele também trata duplicações e gera arquivos de utilitários para centralizar o código repetido.
 
-## Estrutura Gerada
+## Funcionalidades
 
-```
-test/
-├── features/
-│   ├── specs/      # Arquivos Gherkin (.feature)
-│   ├── steps/      # Definições dos steps do BDD
-│   └── services/   # Classes de serviço para interação com API
-```
+### 1. **Solicitação de Caminhos**
+   O script solicita ao usuário os caminhos dos arquivos necessários:
+   - Caminho da coleção Postman.
+   - Caminho do projeto onde os testes serão gerados.
 
-## Pré-requisitos
+### 2. **Diretórios de Destino**
+   - **FEATURES_DIR**: Diretório onde os arquivos `.feature` serão gerados.
+   - **STEPS_DIR**: Diretório onde os arquivos `_steps.py` serão gerados.
+   - **SERVICES_DIR**: Diretório onde os arquivos de serviço (`_service.py`) serão gerados.
+   - **UTILS_FEATURE**: Arquivo centralizado para features duplicadas.
+   - **UTILS_STEPS**: Arquivo centralizado para steps duplicados.
+   - **UTILS_SERVICE**: Arquivo centralizado para serviços duplicados.
 
-- Python 3.7+
-- Postman Collection (formato JSON)
-- Bibliotecas Python:
-  - requests
-  - behave
+### 3. **Funções principais**
 
-## Instalação
+#### `detect_duplicates(directory: str, utils_file: str, check_imports: bool = False) -> None`
+   Detecta duplicações nos arquivos de um diretório e as move para um arquivo de utilitários, evitando que múltiplos arquivos com o mesmo conteúdo sejam gerados.
 
-1. Clone o repositório:
-```bash
-git clone [url-do-repositorio]
-```
+   - **directory**: Diretório onde os arquivos serão verificados.
+   - **utils_file**: Arquivo onde os conteúdos duplicados serão centralizados.
+   - **check_imports**: Verifica se há imports duplicados, caso o valor seja `True`.
 
-2. Instale as dependências:
-```bash
-pip install requests behave
-```
+#### `ensure_directories() -> None`
+   Cria os diretórios necessários para armazenar os arquivos gerados.
 
-## Configuração
+#### `generate_gherkin_files(collection: Dict) -> None`
+   Gera arquivos `.feature` para os endpoints presentes na coleção Postman. Cada endpoint gera um arquivo de funcionalidade em Gherkin.
 
-1. Coloque seu arquivo de coleção do Postman no diretório `collections/` com o nome `Swagger-Petstore.postman_collection.json`
+#### `generate_step_files(collection: Dict) -> None`
+   Gera arquivos de steps (`_steps.py`) com as definições de cenários e ações a serem realizadas durante os testes. Cada arquivo de step importa a classe de serviço específica para o endpoint.
 
-2. Certifique-se que a estrutura do arquivo JSON da coleção está correta e contém:
-   - Nome dos endpoints
-   - Métodos HTTP
-   - URLs
-   - Parâmetros (se houver)
+#### `generate_service_classes(collection: Dict) -> None`
+   Gera arquivos de classe de serviço (`_service.py`), que contêm a lógica para fazer as requisições para os endpoints definidos na coleção Postman.
 
-## Uso
+#### `process_items(items: List[Dict], callback: Callable[[Dict], None]) -> None`
+   Processa cada item da coleção Postman, chamando a função `callback` para gerar os arquivos correspondentes (Gherkin, steps e serviço) para cada endpoint.
 
-Execute o script principal:
+### 4. **Fluxo do Script**
+   O script segue a seguinte sequência de passos:
+   1. **Criação de Diretórios**: Verifica e cria os diretórios necessários para armazenar os arquivos gerados.
+   2. **Leitura da Coleção**: Lê o arquivo JSON da coleção Postman fornecido pelo usuário.
+   3. **Geração dos Arquivos de Teste**:
+      - **Arquivos `.feature`**: Gerados a partir dos endpoints.
+      - **Arquivos `_steps.py`**: Gerados com as ações e validações para cada endpoint.
+      - **Arquivos `_service.py`**: Gerados com a lógica para as requisições HTTP.
+   4. **Verificação de Duplicações**: Arquivos duplicados são movidos para os arquivos de utilitários correspondentes (`utils_feature.feature`, `utils_steps.py` e `utils_service.py`).
 
-```bash
-python postman_test_generator.py
-```
+### 5. **Exemplo de Uso**
+- Ao executar o script, será solicitado que o usuário forneça o caminho da coleção Postman e o caminho do projeto:
+    - Digite o caminho da collection Postman:
+        ```bash
+        /caminho/para/collection.json
+        ```
+    - Digite o caminho do projeto onde os testes serão gerados:
+        ```bash
+        /caminho/do/projeto
+        ```
 
-O script irá:
-1. Carregar a coleção do Postman
-2. Criar a estrutura de diretórios necessária
-3. Gerar arquivos Gherkin (.feature) para cada endpoint
-4. Gerar arquivos de steps para cada cenário
-5. Gerar classes de serviço para interação com a API
-
-## Estrutura dos Arquivos Gerados
-
-### Arquivos Gherkin (.feature)
-
-```gherkin
-#language:pt
-Funcionalidade: [Nome do Endpoint]
-    Como usuário com acesso ao Endpoint
-    Quero interagir com o [Grupo]
-    Para que eu possa [Ação] com sucesso
-
-    @[Tag]
-    Cenário: [Nome do Cenário]
-        Dado que configurei a solicitação
-        Quando envio uma solicitação [MÉTODO] para "[URL]"
-        Então recebo uma resposta válida
-```
-
-### Arquivos de Steps
-
-```python
-from behave import given, when, then
-from test.features.services.[service] import [Service]Class
-
-@given('que configurei a solicitação')
-def setup_request(context):
-    context.payload = {}
-
-@when('envio uma solicitação')
-def send_request(context):
-    context.response = service.method(context.payload)
-
-@then('recebo uma resposta válida')
-def validate_response(context):
-    assert context.response.status_code == 200
-```
-
-### Classes de Serviço
-
-```python
-import requests
-from support.logger import *
-from support.ambientes import *
-from support.loads import *
-
-class ServiceClass:
-    def method(self, payload=None):
-        try:
-            response = requests.method(f'{BASE_URL_QA}/2020', json=payload)
-            return response
-        except Exception as error:
-            logging.error(error)
-            raise
-```
-
-## Personalização
-
-Para personalizar a geração dos testes, você pode modificar:
-
-1. Templates dos arquivos gerados nas funções:
-   - `generate_gherkin_files()`
-   - `generate_step_files()`
-   - `generate_service_classes()`
-
-2. Constantes de diretório no início do arquivo:
-   - `FEATURES_DIR`
-   - `STEPS_DIR`
-   - `SERVICES_DIR`
-
-## Tratamento de Erros
-
-O script inclui tratamento de erros para:
-- Arquivo de coleção não encontrado
-- JSON inválido
-- Erros durante a geração dos arquivos
-- Erros de execução das requisições
-
-## Contribuição
-
-1. Faça o fork do projeto
-2. Crie uma branch para sua feature (`git checkout -b feature/nova-feature`)
-3. Commit suas mudanças (`git commit -am 'Adiciona nova feature'`)
-4. Push para a branch (`git push origin feature/nova-feature`)
-5. Crie um Pull Request
-
-## Licença
-
-Este projeto está sob a licença MIT. Veja o arquivo [LICENSE](LICENSE) para mais detalhes.
+## Conclusão
+ - A ideia deste script e facilitar a geração automatizada de testes a partir de coleções Postman, criando arquivos bem estruturados para facilitar a automação de testes de APIs.
+ - Ele também evita duplicação de código, centralizando trechos reutilizáveis em arquivos de utilitários.

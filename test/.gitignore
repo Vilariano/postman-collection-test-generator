@@ -1,9 +1,0 @@
-**.output
-**.xml
-**.log
-**.hypothesis
-**.pytest_cache
-**.env
-**/__pycache__
-**exemple.log
-.env
