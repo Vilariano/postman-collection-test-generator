@@ -1,10 +1,10 @@
 Metadata-Version: 2.2
 Name: postman-collection-test-generator
-Version: 0.1.2
+Version: 0.1.3
 Summary: Um gerador automático de testes BDD a partir de coleções Postman
 Home-page: https://github.com/Vilariano/postman-collection-test-generator
 Author: Agnaldo Vilariano
-Author-email: seuemail@example.com
+Author-email: aejvilariano128l@gmail.com
 Classifier: Programming Language :: Python :: 3
 Classifier: License :: OSI Approved :: MIT License
 Classifier: Operating System :: OS Independent
@@ -77,13 +77,21 @@ Este script em Python automatiza a geração de testes a partir de coleções Po
 
 ### 5. **Exemplo de Uso**
 - Instale o pacote:
-        ```python
-        pip install postman-collection-test-generator
-        ```
+   ```python
+   pip install postman-collection-test-generator
+   ```
+- A estrutura esperada para seu projeto de ser:
+   ```python
+   test/
+   ├── features/
+   │   ├── specs/ # Arquivos de recursos Gherkin
+   │   ├── steps/ # Definições de etapas
+   │   └── services/ # Classes de serviço
+   ```
 - Execute o comando:
-        ```bash
-        bdd-generator
-        ```
+   ```python
+   bdd-generator
+   ```
 - Ao executar o comando, será solicitado que forneça o caminho da coleção Postman e o caminho do projeto:
     - Digite o caminho da collection Postman:
         ```bash
