@@ -52,7 +52,15 @@ Este script em Python automatiza a geração de testes a partir de coleções Po
    4. **Verificação de Duplicações**: Arquivos duplicados são movidos para os arquivos de utilitários correspondentes (`utils_feature.feature`, `utils_steps.py` e `utils_service.py`).
 
 ### 5. **Exemplo de Uso**
-- Ao executar o script, será solicitado que o usuário forneça o caminho da coleção Postman e o caminho do projeto:
+- Instale o pacote:
+        ```python
+        pip install postman-collection-test-generator
+        ```
+- Execute o comando:
+        ```bash
+        bdd-generator
+        ```
+- Ao executar o comando, será solicitado que forneça o caminho da coleção Postman e o caminho do projeto:
     - Digite o caminho da collection Postman:
         ```bash
         /caminho/para/collection.json

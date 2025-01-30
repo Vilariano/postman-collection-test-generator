@@ -2,8 +2,8 @@ from setuptools import setup, find_packages
 
 setup(
     name="postman-collection-test-generator",
-    version="0.1.0",
-    author="Seu Nome",
+    version="0.1.2",
+    author="Agnaldo Vilariano",
     author_email="seuemail@example.com",
     description="Um gerador automático de testes BDD a partir de coleções Postman",
     long_description=open("README.md", encoding="utf-8").read(),
