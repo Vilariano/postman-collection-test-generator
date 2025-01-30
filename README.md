@@ -53,13 +53,21 @@ Este script em Python automatiza a geração de testes a partir de coleções Po
 
 ### 5. **Exemplo de Uso**
 - Instale o pacote:
-        ```python
-        pip install postman-collection-test-generator
-        ```
+   ```python
+   pip install postman-collection-test-generator
+   ```
+- A estrutura esperada para seu projeto de ser:
+   ```python
+   test/
+   ├── features/
+   │   ├── specs/ # Arquivos de recursos Gherkin
+   │   ├── steps/ # Definições de etapas
+   │   └── services/ # Classes de serviço
+   ```
 - Execute o comando:
-        ```bash
-        bdd-generator
-        ```
+   ```python
+   bdd-generator
+   ```
 - Ao executar o comando, será solicitado que forneça o caminho da coleção Postman e o caminho do projeto:
     - Digite o caminho da collection Postman:
         ```bash
